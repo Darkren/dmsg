@@ -172,13 +172,17 @@ func (a *API) setEntry(w http.ResponseWriter, r *http.Request) {
 // Method: GET
 func (a *API) getAvailableServers() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		a.log.Infoln("GOT INTO HANDLER")
 		entries, err := a.db.AvailableServers(r.Context(), maxGetAvailableServersResult)
 		if err != nil {
+			a.log.Infoln("ERRROR GETTING FROM DB")
 			a.handleError(w, err)
 			return
 		}
+		a.log.Infoln("GOT FROM DB")
 
 		if len(entries) == 0 {
+			a.log.Infoln("NO ENTRIES FOUND")
 			a.writeJSON(w, http.StatusNotFound, disc.HTTPMessage{
 				Code:    http.StatusNotFound,
 				Message: disc.ErrNoAvailableServers.Error(),
@@ -187,7 +191,11 @@ func (a *API) getAvailableServers() http.HandlerFunc {
 			return
 		}
 
+		a.log.Infoln("RETURNING ENTRIES")
+
 		a.writeJSON(w, http.StatusOK, entries)
+
+		a.log.Infoln("RETURNED ENTRIES")
 	}
 }
 
