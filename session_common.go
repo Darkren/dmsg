@@ -69,7 +69,9 @@ func (sc *SessionCommon) initClient(entity *EntityCommon, conn net.Conn, rPK cip
 		return ErrSessionHandshakeExtraBytes
 	}
 
-	ySes, err := yamux.Client(conn, yamux.DefaultConfig())
+	yamuxCfg := yamux.DefaultConfig()
+	yamuxCfg.EnableKeepAlive = false
+	ySes, err := yamux.Client(conn, yamuxCfg)
 	if err != nil {
 		return err
 	}
@@ -102,7 +104,9 @@ func (sc *SessionCommon) initServer(entity *EntityCommon, conn net.Conn) error {
 		return ErrSessionHandshakeExtraBytes
 	}
 
-	ySes, err := yamux.Server(conn, yamux.DefaultConfig())
+	yamuxCfg := yamux.DefaultConfig()
+	yamuxCfg.EnableKeepAlive = false
+	ySes, err := yamux.Server(conn, yamuxCfg)
 	if err != nil {
 		return err
 	}
