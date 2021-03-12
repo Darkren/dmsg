@@ -4,6 +4,7 @@ import (
 	"context"
 	"net"
 	"net/http"
+	"net/http/pprof"
 	"time"
 
 	"github.com/go-chi/chi"
@@ -83,6 +84,7 @@ func New(log logrus.FieldLogger, db store.Storer, m discmetrics.Metrics, testMod
 	r.Get("/dmsg-discovery/available_servers", api.getAvailableServers())
 	r.Get("/dmsg-discovery/health", api.health())
 	r.Get("/health", api.serviceHealth)
+	r.HandleFunc("/debug/pprof/profile", pprof.Profile)
 
 	return api
 }
