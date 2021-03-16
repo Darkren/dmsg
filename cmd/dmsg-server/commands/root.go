@@ -5,6 +5,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"time"
 
@@ -55,6 +56,14 @@ var rootCmd = &cobra.Command{
 		if err := sf.ParseConfig(os.Args, true, &conf); err != nil {
 			log.WithError(err).Fatal()
 		}
+
+		r := chi.NewRouter()
+		r.HandleFunc("/debug/pprof/profile", pprof.Profile)
+		go func() {
+			if err := http.ListenAndServe(":30084", r); err != nil {
+				log.Errorf("ListenAndServe: %v", err)
+			}
+		}()
 
 		m := prepareMetrics(log, sf.Tag, sf.MetricsAddr)
 
